@@ -1,6 +1,6 @@
  'use client';
  import Image from 'next/image';
-import Data from './Data';
+
 import Logo from './Logo';
 import Food from "./Food";
 
@@ -57,7 +57,7 @@ export default function Content(){
       ))}
     </div>*/}
     <Food/>
-     <Data/>
+  
      
     <div className='text-center '>
       <p className="text-black font-bold text-2xl mt-20">For Better Experience Download</p>
