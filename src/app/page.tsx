@@ -7,6 +7,7 @@ import Food from "./components/Food";
 import myArray from "./utils/myArray";
 import Foodcard from "./components/FoodCard.js";
 import Footer from "./components/Footer"; 
+import TestComponent from "./components/TestComponent"; 
 
 export default function Home() {
   return (

@@ -1,14 +1,19 @@
+// Food.js
 'use client';
 import React, { useState } from 'react';
 import { Categories, itemDetails } from '../../utils/myArray';
-import FoodCard from './FoodCard'; // Make sure the file exists and path is correct
+import FoodCard from './FoodCard';
 
 export default function Food() {
   const [selectedItem, setSelectedItem] = useState(null);
 
-  const handleImageClick = (item) => {
+  // Function to handle image click and display data
+  const handleImageClick = (item:any) => {
+    console.log("Clicked on:", item); // Log the clicked title
     setSelectedItem(item.title);
   };
+
+  console.log("Selected Item:", selectedItem); // Log the selected item
 
   return (
     <div className="">
@@ -19,7 +24,10 @@ export default function Food() {
             key={index}
             onClick={() => handleImageClick(item)}
           >
-            <img src={item.src} alt={item.title} />
+            <img
+              src={item.src}
+              alt={item.title}
+            />
             <p className="text-black">{item.title}</p>
           </div>
         ))}
@@ -34,10 +42,11 @@ export default function Food() {
           itemDetails
             .filter((item) => item.category === selectedItem)
             .map((item, index) => (
-              <FoodCard key={index} item={item} />
+              <FoodCard key={index} item={item} /> // Pass each item to FoodCard
             ))}
       </div>
     </div>
   );
 }
+
 
