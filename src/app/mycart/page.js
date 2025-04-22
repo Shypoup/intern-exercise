@@ -1,7 +1,18 @@
+"use client"
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useEffect } from "react";
 
 export default function MyCart() {
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const cart = localStorage.getItem("cart");
+      const cart2 = localStorage.getItem("cartHHH");
+      console.log("cart",cart);
+      console.log("cart2",cart2);
+    }
+  }, []);
   return (
     <div>
       <Navbar />

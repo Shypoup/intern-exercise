@@ -1,9 +1,22 @@
 "use client";
 import { useEffect, useState } from "react";
 
+
+type Post =     {
+  "id": number,
+  "title":string,
+  "body": string,
+  "tags":string[],
+  "reactions": {
+    "likes": number,
+    "dislikes": number
+  },
+  "views": number,
+  "userId": number
+}
 export default function PostsClient() {
-  const [posts, setPosts] = useState([]);
-  const [filteredPosts, setFilteredPosts] = useState([]); // Filtered results
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]); // Filtered results
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(""); // For input box
 
@@ -13,26 +26,18 @@ export default function PostsClient() {
       .then((data) => {
         setPosts(data.posts);
         setFilteredPosts(data.posts);
+        localStorage.setItem("test", "Hello from local storage");
         setLoading(false);
       });
   }, []);
 
   // Handle search filtering
-  const handleSearch = (e) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value.toLowerCase();
     setSearchTerm(keyword);
+    
 
-    const filtered = posts.filter((post) => {
-      const title = post.title?.toLowerCase() || "";
-      const body = post.body?.toLowerCase() || "";
-      const tags = post.tags?.join(" ").toLowerCase() || "";
-
-      return (
-        title.includes(keyword) ||
-        body.includes(keyword) ||
-        tags.includes(keyword)
-      );
-    });
+    const filtered = posts.filter((post) => post.title?.startsWith(keyword));
 
     setFilteredPosts(filtered);
   };

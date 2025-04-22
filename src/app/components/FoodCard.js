@@ -4,9 +4,22 @@ import React, { useState } from 'react';
 export default function FoodCard({ item }) {
   const [count, setCount] = useState(0);
 
-  const handleIncrement = () => setCount(count + 1);
+  const handleIncrement = () => {
+    setCount(count + 1);
+    const cart = localStorage.getItem("cart");
+    if (cart) {
+      const cartArray = JSON.parse(cart);
+      cartArray.push(item);
+      localStorage.setItem("cart", JSON.stringify(cartArray));
+    } else {
+      localStorage.setItem("cart", JSON.stringify([item]));
+    }
+
+  
+  };
   const handleDecrement = () => {
     if (count > 0) setCount(count - 1);
+
   };
 
   return (
