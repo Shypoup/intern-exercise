@@ -1,43 +1,61 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function FoodCard({ item }) {
   const [count, setCount] = useState(0);
 
-  const handleIncrement = () => {
-    setCount(count + 1);
-    const cart = localStorage.getItem("cart");
-    if (cart) {
-      const cartArray = JSON.parse(cart);
-      cartArray.push(item);
-      localStorage.setItem("cart", JSON.stringify(cartArray));
-    } else {
-      localStorage.setItem("cart", JSON.stringify([item]));
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const cart = JSON.parse(localStorage.getItem('cart')) || {};
+      if (cart[item.id]) {
+        setCount(cart[item.id].count);
+      }
     }
+  }, [item.id]);
 
-  
+  const updateLocalStorage = (newCount) => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || {};
+    if (newCount > 0) {
+      cart[item.id] = {
+        id: item.id,
+        title: item.title,
+        price: item.price,
+        image: item.image1,
+        count: newCount,
+      };
+    } else {
+      delete cart[item.id];
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
   };
-  const handleDecrement = () => {
-    if (count > 0) setCount(count - 1);
 
+  const handleIncrement = () => {
+    const newCount = count + 1;
+    setCount(newCount);
+    updateLocalStorage(newCount);
+  };
+
+  const handleDecrement = () => {
+    if (count > 0) {
+      const newCount = count - 1;
+      setCount(newCount);
+      updateLocalStorage(newCount);
+    }
   };
 
   return (
     <div className="mt-[10px] border-2 border-gray-400 flex flex-col items-center w-64 h-auto rounded-lg shadow">
-      {/* Image with Cart Overlay */}
       <div className="relative w-[250px] h-[180px]">
         <img
           src={item.image1}
           alt={`${item.title} image 1`}
           className="rounded-t-lg w-full h-full object-cover text-xlg bg-white text-black"
         />
-
-        {/* Cart Button Overlay */}
         <div className="absolute top-2 right-2 mt-35 bg-green">
           {count === 0 ? (
             <button
               onClick={handleIncrement}
-              className="  bg-white text-xl text-black px-3 py-1 rounded-full shadow hover: transition active:scale-95 hover:cursor-pointer"
+              className="bg-white text-xl text-black px-3 py-1 rounded-full shadow hover: transition active:scale-95 hover:cursor-pointer"
             >
               +
             </button>
@@ -52,7 +70,7 @@ export default function FoodCard({ item }) {
               <span className="text-gray-800 font-medium">{count}</span>
               <button
                 onClick={handleIncrement}
-                className="bg-green-200 hover:bg-green-200 text-green-500 text-xl font-bold px-2 py-1 rounded-full transition active:scale-95"
+                className="bg-green-200 text-green-500 text-xl font-bold px-2 py-1 rounded-full transition active:scale-95"
               >
                 +
               </button>
@@ -61,7 +79,6 @@ export default function FoodCard({ item }) {
         </div>
       </div>
 
-      {/* Text Content */}
       <div className="flex flex-col px-3 py-2 w-full">
         <h2 className="text-lg font-bold text-black">{item.title}</h2>
         <img
@@ -76,4 +93,5 @@ export default function FoodCard({ item }) {
     </div>
   );
 }
+
 

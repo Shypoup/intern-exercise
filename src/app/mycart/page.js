@@ -1,18 +1,29 @@
-"use client"
+'use client';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function MyCart() {
+  const [cartItems, setCartItems] = useState([]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const cart = localStorage.getItem("cart");
-      const cart2 = localStorage.getItem("cartHHH");
-      console.log("cart",cart);
-      console.log("cart2",cart2);
+    if (typeof window !== 'undefined') {
+      const cart = JSON.parse(localStorage.getItem('cart')) || {};
+      setCartItems(Object.values(cart));
     }
   }, []);
+
+  const handleRemove = (id) => {
+    const cart = JSON.parse(localStorage.getItem('cart')) || {};
+    delete cart[id];
+    localStorage.setItem('cart', JSON.stringify(cart));
+    setCartItems(Object.values(cart));
+  };
+
+  const subtotal = cartItems.reduce((acc, item) => acc + (parseFloat(item.price.replace('$', '')) * item.count), 0);
+  const deliveryFee = 2;
+  const total = subtotal + deliveryFee;
+
   return (
     <div>
       <Navbar />
@@ -29,39 +40,21 @@ export default function MyCart() {
                 <th className="px-4 py-3">Remove</th>
               </tr>
             </thead>
-
             <tbody>
-              <tr className="text-left text-[#808080] text-sm border-t border-b border-gray-300">
-                <td className="px-4 py-2">
-                  <img
-                    className="w-15 h-10"
-                    src="https://food-delivery-web-application.vercel.app/assets/food_1-iEOlQHK4.png"
-                  />
-                </td>
-                <td className="px-4 py-3">Greek salad</td>
-                <td className="px-4 py-3">$12</td>
-                <td className="px-4">1</td>
-                <td className="px-4">$12</td>
-                <td className="px-4 py-3">
-                  <button className="text-[#808080] text-lg">&times;</button>
-                </td>
-              </tr>
-
-              <tr className="text-left text-[#808080] text-sm border-b border-gray-300">
-                <td className="px-4 py-2">
-                  <img
-                    className="w-15 h-10"
-                    src="https://food-delivery-web-application.vercel.app/assets/food_2-Bviin0XJ.png"
-                  />
-                </td>
-                <td className="px-4 py-3">Veg salad</td>
-                <td className="px-4 py-3">$18</td>
-                <td className="px-4 py-3">1</td>
-                <td className="px-4">$18</td>
-                <td className="px-4 py-3">
-                  <button className="text-[#808080] text-lg">&times;</button>
-                </td>
-              </tr>
+              {cartItems.map(item => (
+                <tr key={item.id} className="text-left text-[#808080] text-sm border-b border-gray-300">
+                  <td className="px-4 py-2">
+                    <img className="w-15 h-10" src={item.image} alt={item.title} />
+                  </td>
+                  <td className="px-4 py-3">{item.title}</td>
+                  <td className="px-4 py-3">{item.price}</td>
+                  <td className="px-4 py-3">{item.count}</td>
+                  <td className="px-4">${(parseFloat(item.price.replace('$', '')) * item.count).toFixed(2)}</td>
+                  <td className="px-4 py-3">
+                    <button onClick={() => handleRemove(item.id)} className="text-[#808080] text-lg">&times;</button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -73,20 +66,19 @@ export default function MyCart() {
               <tbody>
                 <tr className="border-b border-[#555555]">
                   <td className="py-2 text-[#555555]">Subtotal</td>
-                  <td className="px-4 py-2 text-gray-600 text-right">0</td>
+                  <td className="px-4 py-2 text-gray-600 text-right">${subtotal.toFixed(2)}</td>
                 </tr>
                 <tr className="border-b border-[#555555]">
                   <td className="py-2 text-[#555555]">Delivery Fee</td>
-                  <td className="px-4 py-2 text-gray-600 text-right">2</td>
+                  <td className="px-4 py-2 text-gray-600 text-right">${deliveryFee.toFixed(2)}</td>
                 </tr>
                 <tr className="border-b border-[#555555]">
                   <td className="py-2 text-[#555555] font-semibold">Total</td>
-                  <td className="px-4 py-2 text-gray-600 text-right font-semibold">0</td>
+                  <td className="px-4 py-2 text-gray-600 text-right font-semibold">${total.toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
 
-            {/* زرار خارج الجدول */}
             <button className="mt-4 bg-[#fbbe30] text-white hover:cursor-pointer text-sm h-8 px-4 py-2 rounded">
               PROCEED TO CHECKOUT
             </button>
@@ -105,8 +97,9 @@ export default function MyCart() {
           </div>
         </div>
       </div>
-
       <Footer />
     </div>
   );
 }
+
+
